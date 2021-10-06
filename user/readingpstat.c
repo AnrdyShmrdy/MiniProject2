@@ -2,18 +2,17 @@
 #include "stat.h"
 #include "user.h"
 #include "pstat.h"
-
-int main(argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	int i;
-	struct pstat LaTable;
-	getpinfo(&LaTable);
+	struct pstat laTable;
+	getpinfo(&laTable);
 	for (i = 0; i < 25; i++)
 	{
-		//if (!LaTable.inuse[i])
+		//if (!laTable.inuse[i])
 		// continue;
-		printf(1, "Use: %d  Tickets: %d  PID: %d  Ticks: %d\n", LaTable.inuse[i], LaTable.tickets[i], 
-				LaTable.pid[i], LaTable[ticks[i]);
+		printf(1, "Use: %d  Tickets: %d  PID: %d  Ticks: %d\n", laTable.inuse[i], laTable.tickets[i], 
+				laTable.pid[i], laTable.ticks[i]);
 	}
 	exit();
 }
