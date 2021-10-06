@@ -284,7 +284,29 @@ scheduler(void)
 
   }
 }
-
+int getpinfo(struct pstat* LaTable)  //create a pointer able to point to object of the tpe pstat
+{
+	struct proc *p;   //Create a pointer able to point to objects of the type proc (process) 
+	int i = 0; // used to iterate througt the slots of the arrays in pstat
+	acquire(&ptable.lock);  //lock the ptable (array containing the process) 
+	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){  // use p to iterate throght the ptable 
+		if(p->state == ZOMBIE || p->state == EMBRYO){  //check the state of a process, if it is different of ZOMBY and EMBRIO 
+			continue;
+		}
+		if(p->state == UNUSED){
+			LaTable->inuse[i] = 0;  //check the name of the arrays in pstat. 
+		}
+		else{
+			LaTable->inuse[i] = 1; 
+		}
+		LaTable->pid[i] = p->pid; //with the pid of the process p->
+		LaTable->tickets[i] = p->numtickets; //with the number of tickets
+		LaTable->ticks[i] = p->numticks; //with the number of time the process has runned in the cpu
+		i++;
+	}
+	release(&ptable.lock);
+	return 0;	
+}
 // Enter scheduler.  Must hold only ptable.lock
 // and have changed proc->state.
 void
