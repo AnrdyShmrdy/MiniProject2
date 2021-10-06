@@ -4,6 +4,7 @@
 #include "mmu.h"
 #include "x86.h"
 #include "proc.h"
+#include "pstat.h"
 #include "spinlock.h"
 
 struct {
@@ -302,8 +303,8 @@ int getpinfo(struct pstat* LaTable)  //create a pointer able to point to object 
 			LaTable->inuse[i] = 1; 
 		}
 		LaTable->pid[i] = p->pid; //with the pid of the process p->
-		LaTable->tickets[i] = p->numtickets; //with the number of tickets
-		LaTable->ticks[i] = p->numticks; //with the number of time the process has runned in the cpu
+		LaTable->tickets[i] = p->numTickets; //with the number of tickets
+		LaTable->ticks[i] = p->numTicks; //with the number of time the process has runned in the cpu
 		i++;
 	}
 	release(&ptable.lock);
