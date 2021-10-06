@@ -2,6 +2,7 @@
 #define _USER_H_
 
 struct stat;
+struct pstat; //needed for storing table data
 
 // system calls
 int fork(void);
