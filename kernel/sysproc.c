@@ -15,10 +15,16 @@ sys_fork(void)
 int
 sys_getpinfo(void){
 struct pstat *pTable;
-
-unsigned int number = (unsigned int)&pTable;
-
-return number;
+if(argptr(0, (void *)&pTable, sizeof(*pTable)) < 0){
+	return -1; //validation
+	}
+	if(pTable == NULL){  //validation
+		return -1;
+	}
+	//pTable = NULL;
+	//unsigned int number = (unsigned int)pTable;
+	getpinfo(pTable); //call the getpinf() in proc.c
+	return 0;
 }
 
 int
