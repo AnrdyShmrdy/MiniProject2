@@ -26,7 +26,17 @@ if(argptr(0, (void *)&pTable, sizeof(*pTable)) < 0){
 	getpinfo(pTable); //call the getpinf() in proc.c
 	return 0;
 }
-
+int sys_settickets(void)
+{
+	int ticketsGotIt;
+	if (argint(0, &ticketsGotIt) < 0)  //this is the way to pass an integer as a parameters in sysproc.c, will pass this tickets in the experiment
+	{
+		return -1;  //validation line	
+	}
+	else{
+		return settickets(ticketsGotIt); //assigntickets big implementation is in pro.c
+	}
+}
 int
 sys_exit(void)
 {
