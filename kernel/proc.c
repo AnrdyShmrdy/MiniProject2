@@ -261,30 +261,52 @@ scheduler(void)
   struct proc *p;
 
   for(;;){
+	  
+	int lotteryWinner = 0; 
+    int totaltickets = 0;
+    int counter = 0;
     // Enable interrupts on this processor.
     sti();
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE)
-        continue;
+	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+		if(p->state == RUNNABLE){
+			totaltickets += p->numtickets;
+		}
+	}
 
-      // Switch to chosen process.  It is the process's job
-      // to release ptable.lock and then reacquire it
-      // before jumping back to us.
-      proc = p;
-      switchuvm(p);
-      p->state = RUNNING;
-      swtch(&cpu->scheduler, proc->context);
-      switchkvm();
+	// call your random number generator ///
+		
+	if(totaltickets > 0){
+	lotteryWinner = rand() % totaltickets + 1;
+	}
 
-      // Process is done running for now.
-      // It should have changed its p->state before coming back.
-      proc = 0;
-    }
+    // Loop over process table looking for process to run.
+	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+	  if(p->state == RUNNABLE){
+		if(counter < lotteryWinner){
+		  counter += p->numtickets;
+		  if(counter >= lotteryWinner){
+			  // Switch to chosen process.  It is the process's job
+			  // to release ptable.lock and then reacquire it
+			  // before jumping back to us.
+			  proc = p;
+			  switchuvm(p);
+			  p->state = RUNNING;
+			  p->numticks += 1;
+			  swtch(&cpu->scheduler, proc->context);
+			  switchkvm();
+
+			  // Process is done running for now.
+			  // It should have changed its p->state before coming back.
+			  proc = 0;
+			  continue;
+			}
+		}
+	  }
+	}
     release(&ptable.lock);
-
   }
 }
 int getpinfo(struct pstat* LaTable)  //create a pointer able to point to object of the tpe pstat
