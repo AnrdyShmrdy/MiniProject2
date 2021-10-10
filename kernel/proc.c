@@ -47,7 +47,7 @@ found:
   p->state = EMBRYO;
   p->pid = nextpid++;
   p->numTicks = 0; // number of times schedule in the cpu =0
-  p->numTickets = 10;
+  p->numTickets = 1;
   release(&ptable.lock);
 
   // Allocate kernel stack if possible.
@@ -155,7 +155,7 @@ fork(void)
     if(proc->ofile[i])
       np->ofile[i] = filedup(proc->ofile[i]);
   np->cwd = idup(proc->cwd);
- 
+  np->numTickets = proc->numTickets;
   pid = np->pid;
   np->state = RUNNABLE;
   safestrcpy(np->name, proc->name, sizeof(proc->name));
