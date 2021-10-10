@@ -17,6 +17,7 @@ USER_PROGS := \
 	usertests\
 	wc\
 	readingpstat\
+	tickettest\
 	zombie
 
 USER_PROGS := $(addprefix user/, $(USER_PROGS))
