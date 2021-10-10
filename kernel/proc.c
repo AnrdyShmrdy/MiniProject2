@@ -7,6 +7,15 @@
 #include "pstat.h"
 #include "spinlock.h"
 
+//implementation of random number generator:
+#define SCHRAND_MAX ((1U << 31) -1)
+#define SCHRAND_MULT 214013
+#define SCHRAND_CONST 2531011
+int rseed = 707606505;
+int rand(void){
+	return rseed = (rseed * SCHRAND_MULT + SCHRAND_CONST) % SCHRAND_MAX;
+}
+
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -272,7 +281,7 @@ scheduler(void)
     acquire(&ptable.lock);
 	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
 		if(p->state == RUNNABLE){
-			totaltickets += p->numtickets;
+			totaltickets += p->numTickets;
 		}
 	}
 
@@ -286,7 +295,7 @@ scheduler(void)
 	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
 	  if(p->state == RUNNABLE){
 		if(counter < lotteryWinner){
-		  counter += p->numtickets;
+		  counter += p->numTickets;
 		  if(counter >= lotteryWinner){
 			  // Switch to chosen process.  It is the process's job
 			  // to release ptable.lock and then reacquire it
@@ -294,7 +303,7 @@ scheduler(void)
 			  proc = p;
 			  switchuvm(p);
 			  p->state = RUNNING;
-			  p->numticks += 1;
+			  p->numTicks += 1;
 			  swtch(&cpu->scheduler, proc->context);
 			  switchkvm();
 
@@ -309,6 +318,18 @@ scheduler(void)
     release(&ptable.lock);
   }
 }
+
+int settickets(int passTickets)
+{
+	//make validation here, if you want 
+	if(passTickets < 1 || passTickets == NULL){
+		return -1;
+	}
+
+	proc->numTickets = passTickets;
+	return 0;
+}
+
 int getpinfo(struct pstat* LaTable)  //create a pointer able to point to object of the tpe pstat
 {
 	struct proc *p;   //Create a pointer able to point to objects of the type proc (process) 
